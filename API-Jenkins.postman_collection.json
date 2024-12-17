@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "7aa4ca7b-3958-4c02-b141-3e988ff2d689",
+		"name": "API-Jenkins",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25648855",
+		"_collection_link": "https://www.postman.com/ukubatbekova/workspace/nov-24/collection/25648855-7aa4ca7b-3958-4c02-b141-3e988ff2d689?action=share&source=collection_link&creator=25648855"
+	},
+	"item": [
+		{
+			"name": "sign-in - [T]",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Verify user role equals - TEACHER\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"TEACHER\");",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"token_teacher\", jsonData.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"66ll@aggressivesa.online\",\n  \"password\": \"12345A\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/sign-in",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "quiz - [T] - create new quiz",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"quizId\", jsonData.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_teacher}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Demo Quiz - Umsunai\",\n  \"totalScore\": 18,\n  \"passingPercentage\": 75,\n  \"showStopperQuestion\": 1,\n  \"questions\": [\n    {\n      \"type\": \"TEXTUAL\",\n      \"question\": \"What is your name?\",\n      \"score\": 5\n    },\n    {\n      \"type\": \"SINGLE_CHOICE\",\n      \"question\": \"Which city is city largest in California?\",\n      \"score\": 7,\n      \"answer\": 2,\n      \"hasOtherOption\": false,\n      \"options\": [\n        \"San Francisco\",\n        \"Sacramento\",\n        \"Los Angeles\",\n        \"Redding\"\n      ]\n    },\n    {\n      \"type\": \"MULTIPLE_CHOICE\",\n      \"question\": \"Who was apple founded by?\",\n      \"score\": 6,\n      \"answers\": [\n        0,\n        1,\n        2\n      ],\n      \"hasOtherOption\": true,\n      \"options\": [\n        \"Steve Jobs\",\n        \"Steve Wozniak\",\n        \"Ronald Wayne\",\n        \"Ronald Reagan\"\n      ]\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/quiz",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quiz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "quiz - [T] - delete the quiz",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verify that the quiz was deleted\", function () {",
+							"\tpm.expect(pm.response.text()).to.include(\"Quiz was deleted\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_teacher}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/quiz/{{quizId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"quiz",
+						"{{quizId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
